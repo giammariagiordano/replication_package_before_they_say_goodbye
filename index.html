@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Replication Package</title>
+<meta name="description" content="Replication package of “Before They Say Goodbye: Psychological Signals of Developer Disengagement in Open Source”.">
+<style>
+:root {
+  --bg: #fbfaf8; --surface: #ffffff; --ink: #1d1f23; --muted: #5d636e; --line: #e4e1db;
+  --accent: #2f5d8a; --accent-soft: #e8eff6; --code-bg: #f3f1ed; --ok: #2e6b4a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15171a; --surface: #1c1f23; --ink: #e8e6e1; --muted: #a1a6ae; --line: #2e3238;
+    --accent: #8db6dd; --accent-soft: #22303d; --code-bg: #23262b; --ok: #7cc39b;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15171a; --surface: #1c1f23; --ink: #e8e6e1; --muted: #a1a6ae; --line: #2e3238;
+  --accent: #8db6dd; --accent-soft: #22303d; --code-bg: #23262b; --ok: #7cc39b;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+a { color: var(--accent); text-underline-offset: 2px; }
+.wrap { max-width: 920px; margin: 0 auto; padding: 0 16px; }
+header { border-bottom: 1px solid var(--line); background: var(--surface); }
+header .wrap { padding-top: 40px; padding-bottom: 32px; }
+.eyebrow { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+h1 { font-family: ui-serif, Georgia, "Times New Roman", serif; font-weight: 600; font-size: clamp(26px, 4vw, 36px); line-height: 1.2; margin: 0 0 12px; }
+.lede { color: var(--muted); max-width: 680px; margin: 0; }
+nav { position: sticky; top: 0; z-index: 2; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+nav .wrap { display: flex; gap: 18px; overflow-x: auto; padding-top: 10px; padding-bottom: 10px; font-size: 14px; white-space: nowrap; scrollbar-width: none; }
+nav .wrap::-webkit-scrollbar { display: none; }
+nav a { color: var(--muted); text-decoration: none; }
+nav a:hover { color: var(--ink); }
+section { padding: 36px 0 8px; }
+h2 { font-family: ui-serif, Georgia, serif; font-weight: 600; font-size: 24px; margin: 0 0 12px; }
+h3 { font-size: 16px; margin: 24px 0 8px; }
+p { margin: 0 0 12px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 20px 0 0; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; }
+.stat b { display: block; font-size: 22px; font-variant-numeric: tabular-nums; }
+.stat span { color: var(--muted); font-size: 13px; }
+pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13.5px; }
+code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+pre { background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; overflow-x: auto; line-height: 1.5; margin: 0 0 14px; }
+pre code { background: none; padding: 0; }
+.table-scroll { overflow-x: auto; margin: 0 0 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; color: var(--muted); font-size: 13px; background: var(--code-bg); }
+tr:last-child td { border-bottom: 0; }
+td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.note { background: var(--accent-soft); border-radius: 8px; padding: 12px 16px; font-size: 15px; margin: 0 0 16px; }
+.tree { line-height: 1.7; }
+.tree .c { color: var(--muted); }
+footer { border-top: 1px solid var(--line); margin-top: 40px; padding: 20px 0 40px; color: var(--muted); font-size: 14px; }
+.theme { float: right; background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 6px; padding: 3px 10px; font: inherit; font-size: 13px; cursor: pointer; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <button class="theme" id="theme" type="button" aria-label="Toggle dark mode">Theme</button>
+    <p class="eyebrow">Replication package</p>
+    <h1>Before They Say Goodbye: Psychological Signals of Developer Disengagement in Open Source</h1>
+    <p class="lede">Code and pseudonymized data to reproduce the results of the paper: the mining pipeline, the measures per developer and month, and the analysis-ready tables of the three research questions. Reproducing the tables takes a few minutes on a laptop and needs no GitHub access.</p>
+    <div class="stats">
+      <div class="stat"><b>2,842</b><span>non-archived projects</span></div>
+      <div class="stat"><b>147,326</b><span>human developer-project pairs</span></div>
+      <div class="stat"><b>6,834</b><span>pairs with ≥ 6 active months</span></div>
+      <div class="stat"><b>3,795</b><span>abandonments in the survival models</span></div>
+    </div>
+  </div>
+</header>
+<nav aria-label="Sections">
+  <div class="wrap">
+    <a href="#contents">Contents</a>
+    <a href="#reproduce">Reproduce the results</a>
+    <a href="#data">Data</a>
+    <a href="#map">Paper → files</a>
+    <a href="#pipeline">Full pipeline</a>
+    <a href="#ethics">Ethics</a>
+  </div>
+</nav>
+
+<main class="wrap">
+<section id="contents">
+  <h2>Contents</h2>
+  <pre class="tree"><code>replication/
+├── index.html                     <span class="c">this page</span>
+├── data/                          <span class="c">pseudonymized tables, CSV compressed with gzip (92 MB)</span>
+│   ├── projects.csv.gz
+│   ├── developers.csv.gz
+│   ├── developer_months.csv.gz
+│   ├── messages.csv.gz            <span class="c">labels of every message, with its GitHub id, no text</span>
+│   ├── event_time.csv.gz          <span class="c">RQ1</span>
+│   ├── intervals_*.csv.gz         <span class="c">RQ2 and RQ3</span>
+│   ├── sensitivity/&lt;variant&gt;/     <span class="c">the same tables under the thresholds of the Threats to Validity</span>
+│   ├── classifier/                <span class="c">predictions and scores of the emotion classifiers</span>
+│   ├── metadata.json              <span class="c">settings, columns and row counts of every table</span>
+│   ├── results.json               <span class="c">all estimates, as produced by reproduce.py</span>
+│   └── descriptives.json          <span class="c">dataset numbers, as produced by descriptives.py</span>
+└── code/                          <span class="c">the mining and analysis pipeline (1.0 MB)</span>
+    ├── backend/app/               <span class="c">pipeline stages, measures, survival and mixed models</span>
+    ├── backend/scripts/           <span class="c">reproduce.py, descriptives.py, export and emotion classifier scripts</span>
+    ├── backend/tests/
+    ├── frontend/                  <span class="c">web interface to inspect projects and developers</span>
+    ├── docs/
+    ├── Dockerfile, docker-compose.yml
+    └── README.md                  <span class="c">documentation of the tool</span></code></pre>
+</section>
+
+<section id="reproduce">
+  <h2>Reproduce the results</h2>
+  <p>Every number of the paper can be recomputed from <code>data/</code>, with the same functions used for the paper and without access to GitHub. You need Python 3.10–3.12.</p>
+  <pre><code>cd code/backend
+python -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
+pip install -r requirements.txt</code></pre>
+  <h3>1. Research questions and sensitivity analyses</h3>
+  <pre><code>python scripts/reproduce.py ../../data          # everything, about ten minutes
+python scripts/reproduce.py ../../data --main   # RQ1–RQ3 only, about two minutes</code></pre>
+  <p>The script fits the mixed models of RQ<sub>1</sub>, the base, full, and extended Cox models of RQ<sub>2</sub>, the cause-specific models of RQ<sub>3</sub> and the models by destination, the core/peripheral analysis, and, on <code>data/sensitivity/</code>, the analyses under alternative thresholds and with explicit anger only. It writes every estimate to <code>data/results.json</code> and prints one line per set of tables with the estimates of the sensitivity table.</p>
+  <h3>2. Dataset statistics</h3>
+  <pre><code>python scripts/descriptives.py ../../data</code></pre>
+  <p>Bots by detection rule, developers and developer-months, the selection of sustained developers, the table of the dataset, the coverage of the lexical, recognition, citizenship, and accommodation measures, explicit anger, messages not in English, and the outcomes after the exit, written to <code>data/descriptives.json</code>.</p>
+  <h3>3. Emotion classifiers</h3>
+  <p><code>data/classifier/</code> holds the probabilities that each RoBERTa model assigns to the 400 comments of the GitHub test set (Imran et al.) and to the 7,122 comments of the polarity gold standard (Novielli et al.), identified by the datasets' ids. The gold standards cannot be redistributed; once downloaded, the table of the classifiers is recomputed without a GPU:</p>
+  <pre><code>python scripts/emotions/score_predictions.py ../../data/classifier gh_clean.csv github_gold.csv</code></pre>
+  <p>The docstring of the script explains how to obtain the two files. The fine-tuned final model (≈ 480 MB) is available at <a href="MODEL_URL">MODEL_URL</a>; with it, <code>scripts/emotions/evaluate_classifiers.py</code> regenerates the predictions, and the pipeline labels new messages exactly as in the paper.</p>
+  <div class="note">The <code>results.json</code> and <code>descriptives.json</code> shipped in the package are the outputs of these commands on the shipped data, so the numbers can be compared with the paper without running anything.</div>
+</section>
+
+<section id="data">
+  <h2>Data</h2>
+  <p>The tables follow the settings of the paper: abandonment after 12 months without activity while the project is still observed, covariates summarizing the previous three months, and developers who enter the risk set after their sixth active month. Bots are excluded everywhere except in <code>developers</code> and <code>messages</code>, where they are flagged. Column names and row counts are listed in <code>data/metadata.json</code>; the measures are defined in the Research Method section of the paper.</p>
+  <div class="table-scroll">
+  <table>
+    <thead><tr><th>File</th><th>One row per</th><th class="num">Rows</th><th class="num">Size</th><th>Used for</th></tr></thead>
+    <tbody>
+      <tr><td><code>projects.csv.gz</code></td><td>project: repository, URL, size, truck factor</td><td class="num">2,842</td><td class="num">105 kB</td><td>dataset statistics, re-mining</td></tr>
+      <tr><td><code>developers.csv.gz</code></td><td>developer × project, bots included: bot rule, active months, person pseudonym, activity on GitHub after the exit</td><td class="num">149,288</td><td class="num">3.5 MB</td><td>dataset statistics, RQ<sub>3</sub></td></tr>
+      <tr><td><code>developer_months.csv.gz</code></td><td>active developer × project × month, with all the measures</td><td class="num">310,649</td><td class="num">13.2 MB</td><td>dataset statistics, new analyses</td></tr>
+      <tr><td><code>messages.csv.gz</code></td><td>issue, pull request, comment, or review: GitHub id, author pseudonym, labels, lexical counts</td><td class="num">1,745,435</td><td class="num">21.6 MB</td><td>checking the measures</td></tr>
+      <tr><td><code>event_time.csv.gz</code></td><td>active month of a leaver or of a matched stayer in the 12 months before the (pseudo-)exit</td><td class="num">37,178</td><td class="num">644 kB</td><td>RQ<sub>1</sub></td></tr>
+      <tr><td><code>intervals_abandonment.csv.gz</code></td><td>active month at risk, with the lagged covariates (counting process)</td><td class="num">75,218</td><td class="num">3.1 MB</td><td>RQ<sub>2</sub></td></tr>
+      <tr><td><code>intervals_left_github.csv.gz</code></td><td>as above, with leaving GitHub as the event</td><td class="num">73,061</td><td class="num">3.1 MB</td><td>RQ<sub>3</sub></td></tr>
+      <tr><td><code>intervals_moved.csv.gz</code></td><td>as above, with moving elsewhere as the event and its destination</td><td class="num">73,061</td><td class="num">3.1 MB</td><td>RQ<sub>3</sub></td></tr>
+      <tr><td><code>sensitivity/</code></td><td>the four tables above for <code>abandon_6</code>, <code>abandon_18</code>, <code>involvement_3</code>, <code>involvement_12</code>, and <code>explicit_anger</code></td><td class="num">—</td><td class="num">41.6 MB</td><td>Threats to Validity</td></tr>
+      <tr><td><code>classifier/</code></td><td>comment of the two gold standards: probability of each emotion, for each RoBERTa model</td><td class="num">—</td><td class="num">1.3 MB</td><td>table of the classifiers</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <h3>Identifiers</h3>
+  <p><code>project</code> is the public repository name (<code>owner/name</code>). <code>developer</code> and the subject id <code>sid</code> (<code>owner/name:pseudonym</code>) identify a developer within a project through a salted pseudonym, such as <code>amber-heron-3f9a</code>, and <code>person</code> the same person across projects, which clusters the standard errors. The salt is not released. Messages carry no text, but their public GitHub ids, from which the text can be retrieved:</p>
+  <div class="table-scroll">
+  <table>
+    <thead><tr><th><code>kind</code></th><th>URL</th></tr></thead>
+    <tbody>
+      <tr><td><code>issue</code>, <code>pull_request</code></td><td><code>https://github.com/{project}/issues/{number}</code></td></tr>
+      <tr><td><code>issue_comment</code></td><td><code>https://github.com/{project}/issues/{number}#issuecomment-{gh_id}</code></td></tr>
+      <tr><td><code>review_comment</code></td><td><code>https://github.com/{project}/pull/{number}#discussion_r{gh_id}</code></td></tr>
+      <tr><td><code>review</code></td><td><code>https://github.com/{project}/pull/{number}#pullrequestreview-{gh_id}</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <h3>Main columns</h3>
+  <div class="table-scroll">
+  <table>
+    <thead><tr><th>Column</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td><code>start</code>, <code>stop</code>, <code>event</code></td><td>Risk interval in months since entry; <code>event</code> = 1 in the last active month before the outcome.</td></tr>
+      <tr><td><code>core</code>, <code>centrality</code>, <code>truck_factor_member_tv</code></td><td>Structural role over the window (core in any month, highest centrality, truck factor up to the previous month).</td></tr>
+      <tr><td><code>commits</code>, <code>comments</code>, <code>reviews</code>, <code>off_hours_share</code>, <code>cum_active_months</code></td><td>Workload and experience.</td></tr>
+      <tr><td><code>project_active_devs</code>, <code>project_trend</code></td><td>Project context: other active developers and trend of their activity.</td></tr>
+      <tr><td><code>anger_share</code> … <code>surprise_share</code>, <code>negative_emitted_share</code></td><td>Share of the developer's messages expressing each emotion, and negativity.</td></tr>
+      <tr><td><code>anger_received</code>, <code>thanks_received</code>, <code>reactions_pos_received</code></td><td>Anger and gratitude in the replies received, and positive reactions received.</td></tr>
+      <tr><td><code>we_share_12m</code>, <code>we_unknown</code></td><td><i>We</i>-talk pooled over 12 months, and its missing indicator.</td></tr>
+      <tr><td><code>citizenship_share</code>, <code>newcomer_share</code>, <code>accommodation_12m</code>, <code>accommodation_unknown</code></td><td>Further facets of belonging (extended model).</td></tr>
+      <tr><td><code>destination</code></td><td>In <code>intervals_moved</code>, for the moves: <code>other_owner</code>, <code>same_owner</code>, or <code>own</code>; empty for the moves with only private contributions.</td></tr>
+      <tr><td><code>emotions</code>, <code>anger_p</code></td><td>In <code>messages</code>: labels of the final RoBERTa model (<code>-</code> when nothing is left to classify), and the probability of anger for the messages labeled with it.</td></tr>
+      <tr><td><code>words</code>, <code>we_words</code>, <code>i_words</code>, <code>grateful_reply</code>, <code>reply_to</code></td><td>In <code>messages</code>: counts of the dictionaries after cleaning, and gratitude of the replies by people to the opener (<code>reply_to</code>) of the item.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="map">
+  <h2>From the paper to the files</h2>
+  <div class="table-scroll">
+  <table>
+    <thead><tr><th>In the paper</th><th>Data</th><th>Script and key</th></tr></thead>
+    <tbody>
+      <tr><td>Dataset, developer selection, table of the dataset</td><td><code>projects</code>, <code>developers</code>, <code>developer_months</code></td><td><code>descriptives.py</code></td></tr>
+      <tr><td>Coverage of the measures, explicit anger, non-English messages</td><td><code>developer_months</code>, <code>messages</code></td><td><code>descriptives.py</code></td></tr>
+      <tr><td>Table of the emotion classifiers</td><td><code>classifier/</code> and the public gold standards</td><td><code>emotions/score_predictions.py</code></td></tr>
+      <tr><td>Table of RQ<sub>1</sub> (trajectories)</td><td><code>event_time</code></td><td><code>reproduce.py</code>: <code>rq1.models</code></td></tr>
+      <tr><td>Hazard ratios of RQ<sub>2</sub> and RQ<sub>3</sub>, forest plot</td><td><code>intervals_*</code></td><td><code>rq2.base</code>, <code>rq2.full</code>, <code>rq3.left_github.full</code>, <code>rq3.moved.full</code></td></tr>
+      <tr><td>Further facets of belonging</td><td><code>intervals_*</code></td><td><code>rq2.community</code>, <code>rq3.*.community</code> (likelihood-ratio tests, correlations, VIF)</td></tr>
+      <tr><td>Outcomes after the exit, where developers move</td><td><code>developers</code>, <code>intervals_moved</code></td><td><code>descriptives.py</code>; <code>destinations</code></td></tr>
+      <tr><td>Core and peripheral developers</td><td><code>intervals_*</code></td><td><code>strata</code></td></tr>
+      <tr><td>Sensitivity analyses</td><td><code>sensitivity/</code></td><td><code>sensitivity.&lt;variant&gt;</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="pipeline">
+  <h2>Run the full pipeline</h2>
+  <p>The pipeline clones each repository, mines its GitHub history, merges the aliases of each developer, removes bots, classifies the messages, and computes the measures per developer and month. It runs with Docker and needs one or more GitHub tokens.</p>
+  <pre><code>cd code
+GITHUB_TOKENS=&lt;token&gt; docker compose up --build    # interface at http://localhost:8080</code></pre>
+  <p>Add the repositories of <code>data/projects.csv.gz</code> from the interface or the API, as described in <code>code/README.md</code>, and place the fine-tuned model and Senti4SD in <code>external/</code> as the README explains; the worker mines the projects and resumes after interruptions. Once they are done, the paper's results are recomputed from the database with <code>backend/scripts/paper_results.py</code>, and the tables of this package are exported with <code>backend/scripts/replication_export.py</code>.</p>
+  <p>Mining 2,842 projects takes several days and depends on GitHub's rate limits. Since repositories keep changing, a new mining run will not return exactly the same data; the shipped tables are the snapshot analyzed in the paper (October 2026).</p>
+  <h3>Emotion classifier</h3>
+  <p>The scripts in <code>backend/scripts/emotions/</code> prepare the public gold standards (Stack Overflow, Novielli et al.; GitHub, Imran et al.), retrain EmoTxt, fine-tune RoBERTa with a validation split, with 5-fold cross-validation, and as a final model, and evaluate them as in the paper. Retraining needs a GPU and may differ slightly from the released model because of nondeterminism; <code>docs/EMOTIONS.md</code> reports both trainings we ran.</p>
+</section>
+
+<section id="ethics">
+  <h2>Ethics</h2>
+  <p>The study relies on public data and reports only aggregate results. The psychological signals are proxies inferred from language and reactions, not diagnoses, and must not be used to monitor or evaluate individual developers. Pseudonymized data are still personal data: do not attempt to re-identify the developers.</p>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">Anonymous replication package, prepared for double-blind review.</div>
+</footer>
+<script>
+(function () {
+  var root = document.documentElement, key = "theme";
+  try { var saved = localStorage.getItem(key); if (saved) root.setAttribute("data-theme", saved); } catch (e) {}
+  document.getElementById("theme").addEventListener("click", function () {
+    var dark = root.getAttribute("data-theme") === "dark" ||
+      (!root.getAttribute("data-theme") && matchMedia("(prefers-color-scheme: dark)").matches);
+    var next = dark ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem(key, next); } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>

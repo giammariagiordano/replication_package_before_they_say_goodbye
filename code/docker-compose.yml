@@ -1,0 +1,53 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped  # back up when Docker starts, e.g. after a reboot
+    environment:
+      POSTGRES_USER: strainscope
+      POSTGRES_PASSWORD: strainscope
+      POSTGRES_DB: strainscope
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U strainscope"]
+      interval: 5s
+      retries: 10
+
+  api:
+    build: .
+    restart: unless-stopped
+    environment: &env
+      DATABASE_URL: postgresql+psycopg://strainscope:strainscope@db/strainscope
+      GITHUB_TOKENS: ${GITHUB_TOKENS:-}
+      SHOW_REAL_IDENTITIES: ${SHOW_REAL_IDENTITIES:-false}
+    volumes:
+      - repos:/data
+      # text-classification tools and models (README, Text classification); EXTERNAL_SOURCE=external uses the
+      # Docker volume instead of the folder, much faster when the folder is on a Windows drive
+      - ${EXTERNAL_SOURCE:-./external}:/external
+    ports:
+      - "127.0.0.1:8080:8000"  # local only: the API has no authentication
+    depends_on:
+      db:
+        condition: service_healthy
+
+  worker:
+    build: .
+    restart: unless-stopped
+    command: ["python", "-m", "app.worker"]
+    deploy:
+      # worker processes (PostgreSQL only): each runs WORKER_CONCURRENCY projects and one text classification at a time
+      replicas: ${WORKER_REPLICAS:-1}
+    environment: *env
+    volumes:
+      - repos:/data
+      - ${EXTERNAL_SOURCE:-./external}:/external
+    depends_on:
+      db:
+        condition: service_healthy
+    stop_grace_period: 60s
+
+volumes:
+  pgdata:
+  repos:
+  external:

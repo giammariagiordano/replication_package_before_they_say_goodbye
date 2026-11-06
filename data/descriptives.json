@@ -1,0 +1,105 @@
+{
+ "projects": 2842,
+ "developers": {
+  "all": 149288,
+  "bots": 1962,
+  "bot_share": 0.013142382508975939,
+  "bots_by_rule": {
+   "i": 1466,
+   "iii": 416,
+   "iv": 75,
+   "ii": 5
+  },
+  "humans": 147326,
+  "developer_months": 310649
+ },
+ "selection": {
+  "single_month_share": 0.744030245849341,
+  "sustained_pairs": 6834,
+  "sustained_people": 6059,
+  "projects_with_sustained": 2205,
+  "sustained_active_months": {
+   "min": 6.0,
+   "q1": 7.0,
+   "median": 11.0,
+   "q3": 20.0,
+   "max": 222.0
+  }
+ },
+ "per_project": {
+  "commits": {
+   "min": 2.0,
+   "q1": 30.0,
+   "median": 72.0,
+   "q3": 258.0,
+   "max": 53013.0
+  },
+  "issues_prs": {
+   "min": 0.0,
+   "q1": 5.0,
+   "median": 17.0,
+   "q3": 60.0,
+   "max": 16611.0
+  },
+  "comments_reviews": {
+   "min": 0.0,
+   "q1": 4.0,
+   "median": 24.0,
+   "q3": 117.0,
+   "max": 69403.0
+  },
+  "developers": {
+   "min": 1.0,
+   "q1": 4.0,
+   "median": 11.0,
+   "q3": 33.0,
+   "max": 4459.0
+  },
+  "developers_sustained": {
+   "min": 0.0,
+   "q1": 1.0,
+   "median": 1.0,
+   "q3": 2.0,
+   "max": 210.0
+  },
+  "observed_months": {
+   "min": 1.0,
+   "q1": 32.0,
+   "median": 62.0,
+   "q3": 92.0,
+   "max": 260.0
+  }
+ },
+ "lexical": {
+  "messages_with_words": 1263874,
+  "we_words": 333652,
+  "i_words": 1346187,
+  "we_share": 0.19862141550470017,
+  "developer_months_with_pronouns": 0.6103641086885843,
+  "replies_received": 681146,
+  "grateful_share": 0.1018650920654309,
+  "reacted_items": 1299939,
+  "positive_reactions": 144552,
+  "messages_table_with_words": 1263874
+ },
+ "community": {
+  "scored_messages": 738387,
+  "scored_share": 0.5842251680151661,
+  "developer_months_scored": 0.45776101001451797,
+  "thread_messages": 1547085,
+  "others_share": 0.5058532659808608,
+  "newcomer_share": 0.25393950558631234
+ },
+ "emotions": {
+  "classified_messages": 1339295,
+  "anger_labels": 87227,
+  "anger_below_0_5_share": 0.4828206862554026,
+  "non_latin_share": 0.024512150049092993
+ },
+ "after_exit": {
+  "abandoned": 4699,
+  "checked": 4426,
+  "active_elsewhere": 3532,
+  "active_elsewhere_share": 0.7980117487573429
+ }
+}
