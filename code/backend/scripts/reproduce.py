@@ -32,11 +32,13 @@ def rq1(folder: Path) -> dict:
     for s in trajectories.SIGNALS:  # within-project transformation, as in the paper
         rows[s] = rows[s] - rows.groupby("project")[s].transform("mean")
     rows["project"] = "all"
-    return {"models": trajectories.fit_models(rows)}
+    # Main analysis: within-developer model; the random-intercept model of the first version is kept for comparison.
+    return {"models": trajectories.fit_within(rows), "models_random_intercept": trajectories.fit_models(rows)}
 
 
 def analyze(folder: Path) -> dict:
-    """RQ1, RQ2 (base, full, extended model), and RQ3 (cause-specific full and extended models) on one set of tables."""
+    """RQ1, RQ2 (base, full, extended model), and RQ3 (cause-specific base, full, and extended models) on one set of
+    tables."""
     res = {"rq1": rq1(folder)}
     iv = load(folder, "intervals_abandonment").dropna(subset=BASE + PSYCH)
     base, full = cox(iv, BASE), cox(iv, BASE + PSYCH)
@@ -46,8 +48,10 @@ def analyze(folder: Path) -> dict:
     res["rq3"] = {}
     for name in ("left_github", "moved"):
         d = load(folder, f"intervals_{name}").dropna(subset=BASE + PSYCH)
-        f = cox(d, BASE + PSYCH)
-        res["rq3"][name] = {"full": f, "community": extended(d, f)}
+        b, f = cox(d, BASE), cox(d, BASE + PSYCH)
+        lr = 2 * (f["log_likelihood"] - b["log_likelihood"])
+        res["rq3"][name] = {"base": b, "full": f, "community": extended(d, f),
+                            "lr_base_vs_full": {"statistic": lr, "df": len(PSYCH), "p": float(sps.chi2.sf(lr, len(PSYCH)))}}  # fmt: skip
     return res
 
 

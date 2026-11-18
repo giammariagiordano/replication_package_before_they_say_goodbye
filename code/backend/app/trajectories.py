@@ -9,7 +9,9 @@ Design
   replacement, with a fixed seed; M must be at least K months before the end of observation, as for the leavers.
 - Rows: the active developer-months in the `horizon` months up to the anchor (relative month -horizon+1 … 0),
   grouped into bins of `bin_size` months.
-- Model, per signal: linear mixed model with the bin, the group (leaver vs stayer), their interaction, log1p of the
+- Main model of the paper (fit_within): the same terms with developer x project fixed effects, so that each developer
+  is compared only with themself; fit_models below is the random-intercept model, kept as a robustness check.
+- Random-intercept model, per signal (fit_models): linear mixed model with the bin, the group (leaver vs stayer), their interaction, log1p of the
   month's messages as control, project fixed effects, and a random intercept per subject (developer × project).
   The interaction of the bin closest to the exit tells whether leavers diverge from stayers as the exit approaches.
   p-values are corrected across signals with Benjamini-Hochberg.
@@ -24,6 +26,9 @@ from sqlalchemy.orm import Session
 
 from .config import settings
 from .dataset import developer_month_frame
+
+# Optimizers tried for each mixed model (REML); the converged fit with the highest likelihood is kept.
+OPTIMIZERS = ("bfgs", "powell", "lbfgs")
 
 SIGNALS = {
     "anger_share": "Anger",
@@ -132,12 +137,22 @@ def fit_models(rows: pd.DataFrame, min_rows: int = 30) -> list[dict]:
         earliest = int(d["bin"].min())
         fe = " + C(project)" if d["project"].nunique() > 1 else ""
         formula = f"{s} ~ C(bin, Treatment({earliest})) * leaver + log_messages{fe}"
-        try:
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
-                fit = smf.mixedlm(formula, d, groups=d["sid"]).fit(reml=True, method=["lbfgs", "powell"])
-        except Exception as e:  # singular fits on tiny samples are reported, not raised
-            results.append({"signal": s, "label": label, "error": str(e)[:200]})
+        # L-BFGS alone can stop on the boundary (random-intercept variance 0) with a much lower REML likelihood, and
+        # the standard errors of that degenerate fit depend on the library versions. Fit with several optimizers and
+        # keep the converged fit with the highest likelihood.
+        fit, errors = None, []
+        for method in OPTIMIZERS:
+            try:
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    f = smf.mixedlm(formula, d, groups=d["sid"]).fit(reml=True, method=method)
+            except Exception as e:  # singular fits on tiny samples are reported, not raised
+                errors.append(str(e)[:200])
+                continue
+            if f.converged and np.isfinite(f.llf) and (fit is None or f.llf > fit.llf):
+                fit, best = f, method
+        if fit is None:
+            results.append({"signal": s, "label": label, "error": "; ".join(errors) or "no optimizer converged"})
             continue
         ci = fit.conf_int()
         terms = []
@@ -153,8 +168,51 @@ def fit_models(rows: pd.DataFrame, min_rows: int = 30) -> list[dict]:
             "baseline_bin": earliest,
             "leaver_at_baseline": {"coef": float(fit.params[base]), "p": float(fit.pvalues[base])},
             "interactions": terms,
+            "fit": {"optimizer": best, "reml_llf": float(fit.llf), "random_intercept_var": float(fit.cov_re.iloc[0, 0]),
+                    "residual_var": float(fit.scale)},  # fmt: skip
         })  # fmt: skip
     # Benjamini-Hochberg over the interaction of the bin closest to the exit, one test per signal
+    closest = [(i, r["interactions"][-1]["p"]) for i, r in enumerate(results) if r.get("interactions")]
+    if closest:
+        q = false_discovery_control([p for _, p in closest])
+        for (i, _), qi in zip(closest, q):
+            results[i]["interactions"][-1]["q"] = float(qi)
+    return results
+
+
+def fit_within(rows: pd.DataFrame, min_rows: int = 30) -> list[dict]:
+    """Within-developer model per signal (main RQ1 analysis): the bin, its interaction with the group, and log1p of
+    the month's messages, with developer x project fixed effects, i.e. each developer is compared only with themself.
+    Unlike the random-intercept model of fit_models, the interactions cannot be driven by which developers are active
+    in each bin (few leavers write in the earliest one). The group main effect is absorbed by the fixed effects.
+    Standard errors are clustered by developer x project; subjects with a single developer-month carry no within
+    variation and are dropped. Same output as fit_models, plus the size of the estimation sample."""
+    import statsmodels.api as sm
+
+    results = []
+    for s, label in SIGNALS.items():
+        d = rows.dropna(subset=[s])
+        d = d[d.groupby("sid")["sid"].transform("size") > 1]
+        if len(d) < min_rows or d["leaver"].nunique() < 2 or d["bin"].nunique() < 2:
+            results.append({"signal": s, "label": label, "error": f"not enough data ({len(d)} developer-months)"})
+            continue
+        earliest = int(d["bin"].min())
+        bins = sorted(b for b in d["bin"].unique() if b != earliest)
+        x = pd.DataFrame(index=d.index)
+        for b in bins:
+            x[f"bin{b}"] = (d["bin"] == b).astype(float)
+            x[f"leaver_bin{b}"] = x[f"bin{b}"] * d["leaver"]
+        x["log_messages"] = d["log_messages"]
+        x[s] = d[s]
+        within = x - x.groupby(d["sid"]).transform("mean")
+        covs = [c for c in within.columns if c != s]
+        fit = sm.OLS(within[s], within[covs]).fit(cov_type="cluster", cov_kwds={"groups": pd.factorize(d["sid"])[0]})
+        ci = fit.conf_int()
+        terms = [{"bin": int(b), "coef": float(fit.params[f"leaver_bin{b}"]), "lower": float(ci.loc[f"leaver_bin{b}", 0]),
+                  "upper": float(ci.loc[f"leaver_bin{b}", 1]), "p": float(fit.pvalues[f"leaver_bin{b}"])} for b in bins]  # fmt: skip
+        lv = d.groupby("sid")["leaver"].first()
+        results.append({"signal": s, "label": label, "n_rows": int(len(d)), "n_subjects": int(len(lv)),
+                        "n_leavers": int(lv.sum()), "baseline_bin": earliest, "interactions": terms})  # fmt: skip
     closest = [(i, r["interactions"][-1]["p"]) for i, r in enumerate(results) if r.get("interactions")]
     if closest:
         q = false_discovery_control([p for _, p in closest])
